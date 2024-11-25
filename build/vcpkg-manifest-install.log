@@ -1,0 +1,23 @@
+Detecting compiler hash for triplet arm64-osx...
+Compiler found: /Library/Developer/CommandLineTools/usr/bin/c++
+All requested packages are currently installed.
+Total install time: 209 ns
+jsoncpp provides CMake targets:
+
+  # this is heuristically generated, and may not be correct
+  find_package(jsoncpp CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE JsonCpp::JsonCpp)
+
+jsoncpp provides pkg-config modules:
+
+  # A C++ library for interacting with JSON
+  jsoncpp
+
+The package ncurses is compatible with built-in CMake variables:
+
+    set(CURSES_NEED_NCURSES TRUE)
+    find_package(Curses REQUIRED)
+    target_include_directories(main PRIVATE ${CURSES_INCLUDE_DIRS})
+    target_compile_options(main PRIVATE ${CURSES_CFLAGS})
+    target_link_libraries(main PRIVATE ${CURSES_LIBRARIES})
+
