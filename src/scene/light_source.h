@@ -14,8 +14,8 @@ private:
 public:
     LightSource(const Point _pos, const double  _val) : position(_pos), intensity(_val) {};
 
-    char get_color(const Vector3 _perp, const Point _intersect_point);
     Point get_position();
+    double get_intensity();
 
     void shift(const Vector3& _vec) { position += _vec; };
     void transform(const LinearTransformation& _transform) { position = _transform.Transform(position); };

@@ -1,13 +1,16 @@
 #include "object.h"
 
-Object::Object(std::string _file_name)
+Object::Object(std::string _file_name, const Material& _material)
 {
+    material = _material;
+
     Json::Value root;
     Json::Reader reader;
 
     std::ifstream file(_file_name);
     if(!reader.parse(file, root, true)){
-	    std::cout  << "Failed to parse object\n" << reader.getFormattedErrorMessages();
+	    std::cerr  << "Failed to parse object\n" << reader.getFormattedErrorMessages();
+        exit(1);
     }
 
     std::ifstream _points, _poligons;
@@ -77,45 +80,48 @@ int* Object::get_node_ids(const std::string _str)
     return ids;
 }
 
-IntersectionInfo Object::intersect(const Vector3 _direc, const Point _pos, const Poligon* _parent_polig)
+
+info Object::intersect(const Vector3 _direc, const Point _pos, const Poligon* _parent_polig)
 {
     double min_distance = __DBL_MAX__;
     Point intersection_point;
-    IntersectionInfo info;
+    inter_info _info = std::make_tuple(false, Point(), nullptr);
 
     for (size_t i = 0; i < poligons.size(); i++) {
         if (&poligons[i] == _parent_polig)
         {
            continue;
         }
-        IntersectionInfo intersect = poligons[i].intersect(_direc, _pos);
-        if (intersect.get_intersected())
+        std::tuple<bool, Point, Poligon*> intersect = poligons[i].intersect(_direc, _pos);
+        if (std::get<0>(intersect))
         {
-            Point point = intersect.get_intersection_point();
+            Point point = std::get<1>(intersect);
             double distance = (point - _pos).norm();
             if (min_distance > distance) 
             { 
                 min_distance = distance; 
-                info = IntersectionInfo(true, point, intersect.get_intersected_poligon());
+                _info = intersect;
             }
         }
     }
-    return info;   
+    return std::tuple_cat(_info, std::make_tuple(material));   
 }
 
 
-
-void Object::shift(const Vector3 _vec)
+Object Object::shift(const Vector3 _vec)
 {
     for (auto it = poligons.begin(); it != poligons.end(); it++) {
         (*it).shift(_vec);
     } 
+    return *this;
 }
+
     
-void Object::transform(const LinearTransformation _transform)
+Object Object::transform(const LinearTransformation _transform)
 {
     for (auto it = poligons.begin(); it != poligons.end(); it++) {
         (*it).transform(_transform);
     } 
+    return *this;
 }
 

@@ -22,7 +22,6 @@ void PointOfView::transform(const LinearTransformation& _transform)
     view_direction = _transform.Transform(view_direction);
     x_orientation = _transform.Transform(x_orientation);
     y_orientation = _transform.Transform(y_orientation);
-
     position = _transform.Transform(position);
 }
 

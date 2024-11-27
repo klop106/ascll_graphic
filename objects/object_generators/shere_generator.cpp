@@ -8,7 +8,7 @@ int main()
     const double PI = 3.14;
     const double r = 1;
 
-    double step = 0.5;
+    double step = 1;
 
     ofstream points;
     points.open("sphere_points.csv");

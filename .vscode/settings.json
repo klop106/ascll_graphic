@@ -69,6 +69,16 @@
         "functional": "cpp",
         "iterator": "cpp",
         "utility": "cpp",
-        "jsoncpp": "cpp"
+        "jsoncpp": "cpp",
+        "thread": "cpp",
+        "__tree": "cpp",
+        "csignal": "cpp",
+        "future": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "regex": "cpp",
+        "set": "cpp"
     }
 }

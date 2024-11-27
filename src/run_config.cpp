@@ -14,63 +14,149 @@
 #include <chrono>
 #include <thread>
 #include <ncurses.h>
+#include <json/json.h>
 
+const std::string CONFIG_PATH = "../configs/";
 
-int main() {
-
-    // Point position1(-2.1, 0, 0.5);
-    // Vector3 vec1(1, 0, 0);
-    // Vector3 vec2(0, 1, 0);
-    // Vector3 vec3(0, 0, 1);
-
-    // Point point1(-2, -2, 1);
-
-    // Object piramid("../objects/piramid.json");
-    // Object plane("../objects/plane.json");
-    // PointOfView pov(vec1, vec2, vec3, position1);
-    // LightSource light(point1, 3);
-    // Frame scene;
-
-    // std::vector<Object> v1;
-    // v1.push_back(piramid);
-    // v1.push_back(plane);
-
-    // Render render(&pov, &v1, &light, &scene);
-
-    // double v = 0.01;
-    // std::vector<std::string> film;
-    // for (size_t i = 0; i < 100; i++)
-    // {
-    //     double matr[3][3] = {{cos(v * i), -sin(v * i), 0}, {sin(v * i), cos(v * i), 0}, {0, 0, 1}};
-    //     LinearTransformation transformation(matr);
-    //     light.transform(transformation);
-    //     render.render();
-    //     //film.push_back(scene.get_image());
-    // }
-
-    initscr
-
-    // Измеряем размер экрана в рядах и колонках
-    int row, col;
-    getmaxyx(stdscr, row, col);
+class Runner
+{
+private:
+    std::vector<Object> parseObjects(const Json::Value root);
+    std::vector<LightSource> parseLights(const Json::Value root);
+    PointOfView parsePov(const Json::Value root);
+   
+public:
+    Runner(int argc, char *argv[]);
     
-    // перемещение курсора в стандартном экране
-    move(row / 2, col / 2);
+};
 
-    printw("Hello world"); // вывод строки
-    refresh(); // обновить экран
-    getch(); // ждём нажатия символа
-    
-    endwin(); // завершение работы с ncurses
+PointOfView Runner::parsePov(const Json::Value root)
+{
+    Json::Value itr = root["pov"];
+    return  PointOfView(
+                Vector3(
+                    itr["normal"]["x"].asFloat(), 
+                    itr["normal"]["y"].asFloat(), 
+                    itr["normal"]["z"].asFloat()
+                ),
+                Vector3(
+                    itr["tang1"]["x"].asFloat(), 
+                    itr["tang1"]["y"].asFloat(), 
+                    itr["tang1"]["z"].asFloat()
+                ),
+                Vector3(
+                    itr["tang2"]["x"].asFloat(), 
+                    itr["tang2"]["y"].asFloat(), 
+                    itr["tang2"]["z"].asFloat()
+                ),
+                Point(
+                    itr["position"]["x"].asFloat(), 
+                    itr["position"]["y"].asFloat(), 
+                    itr["position"]["z"].asFloat()
+                )
+            );
+}
 
-    // while (true)
-    // {
-    //     for (size_t i = 0; i < 100; i++)
-    //     {
-    //         std::cout << film[i];
-    //         std::this_thread::sleep_for(std::chrono::milliseconds(42));
-    //     }
-    // }
+std::vector<Object> Runner::parseObjects(const Json::Value root)
+{
+    std::vector<Object> objects;
+    for (auto itr : root["objects"]) {
+        objects.push_back(
+            Object(
+                itr["template"].asString(), 
+                Material(
+                    itr["material"]["spec_reflect"].asFloat(), 
+                    itr["material"]["diffuse_reflect"].asFloat(), 
+                    itr["material"]["specular_exponent"].asFloat()
+                )
+            ).transform(
+                LinearTransformation().scaleTransform(itr["scale"].asFloat())
+            ).shift(
+                Vector3(
+                    itr["position"]["x"].asFloat(), 
+                    itr["position"]["y"].asFloat(), 
+                    itr["position"]["z"].asFloat()
+                )
+            )
+        );
+    }
+    return objects;
+}
+
+std::vector<LightSource> Runner::parseLights(const Json::Value root)
+{
+    std::vector<LightSource> lights;
+    for (auto itr : root["light_sources"]) {
+        lights.push_back(
+            LightSource(
+                Point(
+                    itr["position"]["x"].asFloat(), 
+                    itr["position"]["y"].asFloat(), 
+                    itr["position"]["z"].asFloat()
+                ),
+                itr["intensity"].asFloat()
+            )
+        );
+    }
+    return lights;
+}
+
+
+Runner::Runner(int argc, char *argv[])
+{
+    if (argc > 2)
+    {
+        std::cerr << "invalid keys";
+        exit(1);
+    }
+
+    std::ifstream config;
+    Json::Value root;
+    Json::Reader reader;
+
+    try
+    {
+        config.open(CONFIG_PATH + argv[1]);
+    }
+    catch(const std::ifstream::failure& e)
+    {
+        std::cerr << "Exception opening file";
+        exit(1);
+    }
+
+    if(!reader.parse(config, root, true)){
+	    std::cout  << "Failed to parse object\n" << reader.getFormattedErrorMessages();
+    }
+
+    Frame frame;
+    PointOfView pov = parsePov(root);
+    std::vector<LightSource> lights = parseLights(root);
+    std::vector<Object> objects = parseObjects(root);
+    Render render(&pov, &objects, &lights, &frame);
     
-    
+    std::vector<std::string> film;
+    double v = 0.1;
+
+    pov.transform(LinearTransformation().rotationTransform(Vector3(0, 1, 0), 1));
+    for (size_t i = 0; i < 100; i++)
+    {   
+        pov.transform(LinearTransformation().rotationTransform(Vector3(0, 0, 1), v));
+        render.render();
+        film.push_back(frame.get_frame());
+    }
+
+    while (true)
+    {
+        for (size_t i = 0; i < 100; i++)
+        {
+            std::cout << film[i];
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            frame.clean_up();
+        }
+    }
+
+}
+
+int main(int argc, char *argv[]) {
+    Runner(argc, argv);
 }

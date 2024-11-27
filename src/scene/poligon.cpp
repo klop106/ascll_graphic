@@ -28,17 +28,17 @@ void Poligon::transform(const LinearTransformation _transform)
     calc_minors();
 }
 
-IntersectionInfo Poligon::intersect(const Vector3 _direc, const Point _pos)
+std::tuple<bool, Point, Poligon*> Poligon::intersect(const Vector3 _direc, const Point _pos)
 {
     if (abs(_direc.x * minors[0] - _direc.y * minors[1] + _direc.z * minors[2]) < 0.001)
     {
-       return IntersectionInfo(false,  Point(), this);
+       return std::tuple<bool, Point, Poligon*>{false,  Point(), this};
     }
 
     Point intersect_coord = intersect_point(_direc, _pos);
     if ((intersect_coord - _pos).scalar_poduct(_direc) < 0)
     {
-       return IntersectionInfo(false,  Point(), this);
+       return std::tuple<bool, Point, Poligon*>{false,  Point(), this};
     }
     
     double A1 = calc_trinagle_square(intersect_coord, nodes[0], nodes[1]);
@@ -48,9 +48,9 @@ IntersectionInfo Poligon::intersect(const Vector3 _direc, const Point _pos)
 
     if (abs(A1 + A2 + A3 - A) > 0.001)
     {
-       return IntersectionInfo(false,  Point(), this);
+       return std::tuple<bool, Point, Poligon*>{false,  Point(), this};
     }
-    return IntersectionInfo(true,  intersect_coord, this);
+    return std::tuple<bool, Point, Poligon*>{true,  intersect_coord, this};
 }
 
 Point Poligon::intersect_point(const Vector3 _direc, const Point _pos)
@@ -95,21 +95,4 @@ void Poligon::show()
         std::cout << nodes[i].z << std::endl;
         std::cout << std::endl;
     }
-}
-
-//--------------------IntersectionInfo methods--------------------
-
-IntersectionInfo::IntersectionInfo(const bool _intersect, const Point _inter_point, Poligon* _inter_polig)
-{
-    intersected = _intersect;
-    intersection_point = _inter_point;
-    intersected_poligon = _inter_polig; 
-}
-
-IntersectionInfo IntersectionInfo::operator=(const IntersectionInfo& _info)
-{
-    intersected = _info.intersected;
-    intersection_point = _info.intersection_point ;
-    intersected_poligon = _info.intersected_poligon; 
-    return *this;
 }

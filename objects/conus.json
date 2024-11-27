@@ -1,0 +1,4 @@
+{
+    "points": "../objects/conus_points.csv",
+    "poligons": "../objects/conus_poligons.csv"
+}

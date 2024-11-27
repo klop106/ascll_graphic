@@ -5,27 +5,7 @@
 #include "../linear_field_operations/vector.h"
 #include "../linear_field_operations/linear_transform.h"
 
-
-class Poligon;
-
-struct IntersectionInfo
-{
-private:
-    bool intersected;
-    Point intersection_point;
-    Poligon* intersected_poligon;
-
-public:
-    IntersectionInfo(const bool _intersect, const Point _inter_point, Poligon* _inter_polig);
-    IntersectionInfo(): intersected(false), intersection_point(Point()), intersected_poligon(nullptr) {};
-
-    IntersectionInfo operator=(const IntersectionInfo& _info);
-
-    bool get_intersected() { return intersected; }
-    Point get_intersection_point() { return intersection_point; }
-    Poligon* get_intersected_poligon() { return intersected_poligon; }
-};
-
+#include <tuple>
 
 class Poligon
 {
@@ -45,9 +25,9 @@ public:
     void shift(const Vector3 _vec);
     void transform(const LinearTransformation _transform);
 
-    IntersectionInfo intersect(const Vector3 _direc, const Point _pos);
+    std::tuple<bool, Point, Poligon*> intersect(const Vector3 _direc, const Point _pos);
 
-    Vector3 get_normal() {return Vector3(-minors[0], minors[1], -minors[2]); };
+    Vector3 get_normal() const {return Vector3(-minors[0], minors[1], -minors[2]).normalize(); };
 
     void show();
 };

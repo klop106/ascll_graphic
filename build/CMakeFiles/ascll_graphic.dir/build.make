@@ -255,8 +255,8 @@ ascll_graphic: CMakeFiles/ascll_graphic.dir/src/linear_field_operations/vector.c
 ascll_graphic: CMakeFiles/ascll_graphic.dir/src/linear_field_operations/point.cpp.o
 ascll_graphic: CMakeFiles/ascll_graphic.dir/src/linear_field_operations/linear_transform.cpp.o
 ascll_graphic: CMakeFiles/ascll_graphic.dir/build.make
-ascll_graphic: vcpkg_installed/arm64-osx/lib/libncurses.a
-ascll_graphic: vcpkg_installed/arm64-osx/lib/libform.a
+ascll_graphic: vcpkg_installed/arm64-osx/debug/lib/libncurses.a
+ascll_graphic: vcpkg_installed/arm64-osx/debug/lib/libform.a
 ascll_graphic: vcpkg_installed/arm64-osx/debug/lib/libjsoncpp.a
 ascll_graphic: CMakeFiles/ascll_graphic.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/vadim/Desktop/ascll_graphic/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable ascll_graphic"

@@ -1,10 +1,11 @@
 #include "vector.h"
 
-void Vector3::normalize() 
+Vector3 Vector3::normalize() 
 { 
     x = x / norm_cash; 
     y = y / norm_cash; 
     z = z / norm_cash; 
+    return *this;
 }
 
 Vector3 Vector3::vector_poduct(const Vector3 _other) const 

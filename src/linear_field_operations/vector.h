@@ -28,9 +28,10 @@ struct Vector3
         Vector3 operator*(const Vector3 _other) const { return Vector3(x * _other.x, y * _other.y, z * _other.z); }
         Vector3 operator*(const double lamda) const { return Vector3(x * lamda, y * lamda, z * lamda); }
         Vector3 operator/(const Vector3 _other) const { return Vector3(x / _other.x, y / _other.y, z / _other.z); }
-        
+        Vector3 operator/(const double lamda) const { return Vector3(x / lamda, y / lamda, z / lamda); }
+
         double norm() const { return norm_cash; }
-        void normalize();
+        Vector3 normalize();
 
         Vector3 vector_poduct(const Vector3 _other) const ;
         double scalar_poduct(const Vector3 _other) const ;
