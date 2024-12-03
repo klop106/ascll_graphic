@@ -17,7 +17,6 @@ public:
     Point get_position();
     double get_intensity();
 
-    void shift(const Vector3& _vec) { position += _vec; };
     void transform(const LinearTransformation& _transform) { position = _transform.Transform(position); };
 };
 #endif

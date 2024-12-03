@@ -5,7 +5,9 @@ using namespace std;
 
 int main() 
 {
-    const double PI = 3.14;
+    const int N = 20;
+    const double PI = 3.14;    
+    const double delta_phi = PI / N;
     const double r = 1;
 
     double step = 1;
@@ -14,11 +16,11 @@ int main()
     points.open("sphere_points.csv");
     int p = 2;
     points << 1 << "," << 0 << "," << 0 << "," << -1 << ",\n";
-    for (double i = -PI / 2 + step; i < PI / 2 - step; i += step)
+    for (double i = 0; i < N / 2; i++)
     {
-        for (double j = 0 ; j < PI * 2; j += step)
+        for (double j = 0 ; j < N; j++)
         {
-            points << p << "," << r * cos(i) * cos(j) << "," << r * cos(i) * sin(j) << "," << r * sin(i) << ",\n";
+            points << p << "," << r * cos(i * delta_phi - PI / 2) * cos(j * delta_phi) << "," << r * cos(i * delta_phi - PI / 2) * sin(j * delta_phi) << "," << r * sin(i * delta_phi - PI / 2) << ",\n";
             p++;
         }
     }
@@ -28,18 +30,17 @@ int main()
     ofstream poligons;
     poligons.open("sphere_poligons.csv");
     
-    for (int i = 2 ; i < p - static_cast<int>(2 * PI / step); i++)
+    for (int i = 2 ; i < N -1 ; i++)
     {
-            poligons << i << "," << i << "," << i + 1 << "," << i + static_cast<int>(2 * PI / step) << ",\n";
-            poligons << i << "," << i << "," << i + static_cast<int>(2 * PI / step) - 1 << "," << i + static_cast<int>(2 * PI / step) << ",\n";
+        poligons << i << "," << 1 << "," << i << "," << i + 1 << ",\n";
     }
-    for (int i = 2 ; i < static_cast<int>(2 * PI / step) - 1; i++)
+    for (int i = 2 ; i < p; i++)
     {
-            poligons << i << "," << 1 << "," << i << "," << i + 1 << ",\n";
+        poligons << i << "," << i << "," << i + 1 << "," << i + N << ",\n";
     }
-    for (int i = p - static_cast<int>(2 * PI / step); i < p - 2; i++)
+    for (int i = 1 + N * (N / 2 - 1); i < N * (N / 2); i++)
     {
-            poligons << i << "," << p << "," << i << "," << i + 1 << ",\n";
+        poligons << i << "," << i << "," <<  i + 1 << "," << N * (N / 2) << ",\n";
     }
     poligons.close();
 

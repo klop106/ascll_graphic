@@ -30,7 +30,7 @@ public:
 
     void render();
     void show_camera_pos();
-    char cast_ray(const Poligon* _polig, const Point& _intersect_point, const Material& _material) const;
+    float cast_ray(const Poligon* _polig, const Point& _intersect_point, const Material& _material, const size_t resurse_rate = 1) const;
 
     Vector3 reflect(const Vector3& _normal, const Point& _intersect_point, const Point& _light_position) const;
     info intersect(const Vector3& _direc, const Point& _pos, const Poligon* _parent_polig) const;

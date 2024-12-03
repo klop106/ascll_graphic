@@ -22,7 +22,6 @@ public:
     Poligon(const Point _points[3]);
     Poligon(const Point _point1, const Point _point2, const Point _point3);
     
-    void shift(const Vector3 _vec);
     void transform(const LinearTransformation _transform);
 
     std::tuple<bool, Point, Poligon*> intersect(const Vector3 _direc, const Point _pos);

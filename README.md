@@ -18,50 +18,80 @@ AscllGraphic это пакет для визуализации 3d моделей
 ---
 Клонировать репозиторий и перейти в него в командной строке
 ```terminal
-git clone https://github.com/klop106/AscllGraphic.git
-cd AscllGraphic 
+git clone https://github.com/klop106/ascll_graphic.git
+cd ascll_graphic 
 ```
 Собрать бинарный файл
 ```terminal
+mkdir build
+cd build
+cmake ..
 make
 ```
 
 ## Структура пакета
 ---
 ```bash
-.
-├── Makefile
+├── CMakeLists.txt
+├── CMakePresets.json
+├── CMakeUserPresets.json
 ├── README.md
-├── code
-│   ├── frame
-│   │   ├── frame.cpp
-│   │   ├── frame.h
-│   │   ├── vector_2d.cpp
-│   │   └── vector_2d.h
+├── configs
+│   ├── config.json
+│   └── sphere.json
+├── motion
+│   ├── circle.json
+│   └── line.json
+├── objects
+│   ├── 1poligon.json
+│   ├── 1poligon_points.csv
+│   ├── 1poligon_poligons.csv
+│   ├── conus.json
+│   ├── conus_points.csv
+│   ├── conus_poligons.csv
+│   ├── object_generators
+│   │   ├── conus_generator.cpp
+│   │   └── shere_generator.cpp
+│   ├── piramid.json
+│   ├── piramid_points.csv
+│   ├── piramid_poligons.csv
+│   ├── plane.json
+│   ├── plane_points.csv
+│   ├── plane_poligons.csv
+│   ├── sphere.json
+│   ├── sphere_points.csv
+│   ├── sphere_poligons.csv
+│   └── tor.json
+├── src
 │   ├── linear_field_operations
+│   │   ├── CMakeLists.txt
 │   │   ├── linear_transform.cpp
 │   │   ├── linear_transform.h
 │   │   ├── point.cpp
 │   │   ├── point.h
 │   │   ├── vector.cpp
 │   │   └── vector.h
+│   ├── render
+│   │   ├── CMakeLists.txt
+│   │   ├── frame.cpp
+│   │   ├── frame.h
+│   │   ├── render.cpp
+│   │   ├── render.h
+│   │   ├── vector_2d.cpp
+│   │   └── vector_2d.h
 │   ├── run_config.cpp
 │   └── scene
-│       ├── ray.cpp
-│       ├── ray.h
-│       ├── render.cpp
-│       ├── render.h
-│       ├── space.cpp
-│       └── space.h
-├── configs
-│   └── config.json
-├── motion
-│   ├── circle.json
-│   └── line.json
-└── objects
-    ├── cub.json
-    ├── sphere.json
-    └── tor.json
+│       ├── CMakeLists.txt
+│       ├── light_source.cpp
+│       ├── light_source.h
+│       ├── object.cpp
+│       ├── object.h
+│       ├── point_of_view.cpp
+│       ├── point_of_view.h
+│       ├── poligon.cpp
+│       └── poligon.h
+├── vcpkg-configuration.json
+└── vcpkg.json
 
 ```
 * ```code``` содержит исходники проекта
@@ -77,9 +107,8 @@ make
 ``` 
 Ключи ```args``` реализуют дополнительное взаимодействие с выводимым контентом.
 Возможные ключи:
-* ```-s ".\some_file.txt"``` сохранение изображения в *.txt* файл
-* ```-p``` производит полный рендер анимации до отображения ее на экран
-* ```-c config_name``` в случае, если *config.json* не один необходимо ввести этот ключ и название нужного файла, иначе будет выбран первый *.json* файл в папке */config* 
+
+* ```config_name``` в случае, если *config.json* не один необходимо ввести этот ключ и название нужного файла, иначе будет выбран первый *.json* файл в папке */config* 
 ### Структура *config.json*
 Поле ```"type"``` содержит тип генерируемого контента:
 * ```Animation = 0```
@@ -90,7 +119,7 @@ make
 * Движение POV по заданной траектории
 ```json
 {
-    "type": "тип генерируемого контента int",
+    "type": "тип генерируемого контента bool",
     "objects": [
         {
             "pos": {
@@ -108,7 +137,14 @@ make
                 "z": "double value"
             },
             "scale": "double value",
-            "template": "../objects/object1.json"
+            "template": "../objects/object1.json",
+            "material": {
+                "spec_reflect": 0,
+                "diffuse_reflect": 0,
+                "specular_exponent": 0,
+                "specularity": 0.5,
+                "attenuation": [1.0, 0.1, 0.0]
+            }
         },
         ...
     ],
@@ -132,41 +168,37 @@ make
         ...
     ],
     "pov": {
-        "data": "depends on scene type"
+        "position": {
+                "x": -12.0,
+                "y": 0,
+                "z": 0
+        },
+        "normal": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+        },
+        "tang1": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+        },
+        "tang2": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+        }
     }
 }
 ``` 
 
 ### Задание собственных 3D объектов
 Создание пользовательских объктов также реализуется путем задания значений в *.json* файле.
-Каждый объект состоит из набора полигонов, кодируемых тремя точками в системе отсчета связанной с ```"pos"``` .
+Каждый объект состоит из набора полигонов, кодируемых тремя точками в системе отсчета связанной с нулевой системой отсчета .
 ```json
 {
-    "poligons": [
-        {
-            "point1": {
-                "x": "double value",
-                "y": "double value",
-                "z": "double value"
-            },
-            "point2": {
-                "x": "double value",
-                "y": "double value",
-                "z": "double value"
-            },
-            "point3": {
-                "x": "double value",
-                "y": "double value",
-                "z": "double value"
-            }
-        },
-        ...
-    ],
-    "pos": {
-        "x": "double value",
-        "y": "double value",
-        "z": "double value"
-    }
+    "points": "../objects/conus_points.csv",
+    "poligons": "../objects/conus_poligons.csv"
 }
 ```
 ## Пользовательские сценарии

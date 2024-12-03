@@ -15,8 +15,6 @@ PointOfView::PointOfView(const Vector3 _normal, const Vector3 _tangen_x, const V
     y_orientation =_tangen_y;
 }
     
-void PointOfView::shift(const Vector3& _vec) { position = position + _vec; }
-
 void PointOfView::transform(const LinearTransformation& _transform)
 {
     view_direction = _transform.Transform(view_direction);

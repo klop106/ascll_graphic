@@ -1,5 +1,4 @@
 build/
 *.o
-smth.txt
-.vscode/
-.gitignore
+smth.txt.vscode
+.vscode

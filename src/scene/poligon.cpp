@@ -16,12 +16,6 @@ Poligon::Poligon(const Point _point1, const Point _point2, const Point _point3)
     calc_minors();
 }
 
-void Poligon::shift(const Vector3 _vec)
-{
-    for (size_t i = 0; i < 3; i++) { nodes[i] += _vec; }
-    calc_minors();
-}
-
 void Poligon::transform(const LinearTransformation _transform) 
 { 
     for (size_t i = 0; i < 3; i++) { nodes[i] = _transform.Transform(nodes[i]); }

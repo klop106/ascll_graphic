@@ -30,6 +30,7 @@ public:
     
 };
 
+
 PointOfView Runner::parsePov(const Json::Value root)
 {
     Json::Value itr = root["pov"];
@@ -57,31 +58,42 @@ PointOfView Runner::parsePov(const Json::Value root)
             );
 }
 
+
 std::vector<Object> Runner::parseObjects(const Json::Value root)
 {
     std::vector<Object> objects;
     for (auto itr : root["objects"]) {
+        float albedo[3] = {
+            itr["material"]["attenuation"][0].asFloat(), 
+            itr["material"]["attenuation"][1].asFloat(), 
+            itr["material"]["attenuation"][2].asFloat()
+        };
         objects.push_back(
             Object(
                 itr["template"].asString(), 
                 Material(
                     itr["material"]["spec_reflect"].asFloat(), 
                     itr["material"]["diffuse_reflect"].asFloat(), 
-                    itr["material"]["specular_exponent"].asFloat()
+                    itr["material"]["specular_exponent"].asFloat(),
+                    itr["material"]["specularity"].asFloat(),
+                    albedo
                 )
             ).transform(
                 LinearTransformation().scaleTransform(itr["scale"].asFloat())
-            ).shift(
-                Vector3(
-                    itr["position"]["x"].asFloat(), 
-                    itr["position"]["y"].asFloat(), 
-                    itr["position"]["z"].asFloat()
+            ).transform(
+                LinearTransformation().shiftTransform(
+                    Vector3(
+                        itr["position"]["x"].asFloat(), 
+                        itr["position"]["y"].asFloat(), 
+                        itr["position"]["z"].asFloat()
+                    )
                 )
             )
         );
     }
     return objects;
 }
+
 
 std::vector<LightSource> Runner::parseLights(const Json::Value root)
 {
@@ -140,7 +152,7 @@ Runner::Runner(int argc, char *argv[])
     pov.transform(LinearTransformation().rotationTransform(Vector3(0, 1, 0), 1));
     for (size_t i = 0; i < 100; i++)
     {   
-        pov.transform(LinearTransformation().rotationTransform(Vector3(0, 0, 1), v));
+        pov.transform(LinearTransformation().rotationTransform(Vector3(0, 0, 1), 0.05));
         render.render();
         film.push_back(frame.get_frame());
     }
@@ -149,9 +161,9 @@ Runner::Runner(int argc, char *argv[])
     {
         for (size_t i = 0; i < 100; i++)
         {
-            std::cout << film[i];
+            std::cout << film[i] << std::flush;
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            frame.clean_up();
+            std::system("clean");
         }
     }
 

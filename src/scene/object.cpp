@@ -108,15 +108,6 @@ info Object::intersect(const Vector3 _direc, const Point _pos, const Poligon* _p
 }
 
 
-Object Object::shift(const Vector3 _vec)
-{
-    for (auto it = poligons.begin(); it != poligons.end(); it++) {
-        (*it).shift(_vec);
-    } 
-    return *this;
-}
-
-    
 Object Object::transform(const LinearTransformation _transform)
 {
     for (auto it = poligons.begin(); it != poligons.end(); it++) {

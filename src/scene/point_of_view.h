@@ -17,7 +17,6 @@ private:
 public:
     PointOfView(const Vector3 _normal, const Vector3 _tangen_x, const Vector3 _tangen_y, const Point _pos); 
 
-    void shift(const Vector3& _vec);
     void transform(const LinearTransformation& _transform);
 
     Vector3 get_x_orientation() const { return x_orientation; }
