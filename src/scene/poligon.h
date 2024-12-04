@@ -26,7 +26,7 @@ public:
 
     std::tuple<bool, Point, Poligon*> intersect(const Vector3 _direc, const Point _pos);
 
-    Vector3 get_normal() const {return Vector3(-minors[0], minors[1], -minors[2]).normalize(); };
+    Vector3 get_normal() const {return Vector3(minors[0], -minors[1], minors[2]).normalize(); };
 
     void show();
 };

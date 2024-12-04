@@ -52,7 +52,8 @@ void Frame::mark_pixel(const size_t _i, const size_t _j, const char _pixel_value
 
 Vector2 Frame::get_pixel_position(const size_t _i, const size_t _j) const
 {
-    return Vector2(2. * (_i - size_x / 2.) / size_x, 2. * (size_y / 2. - _j) / size_y);
+    float koeff_screen = static_cast<float>(size_x) / static_cast<float>(size_y);
+    return Vector2((2. * (_i - size_x / 2.) / size_x) * koeff_screen, 2. * (size_y / 2. - _j) / size_y);
 }
 
 

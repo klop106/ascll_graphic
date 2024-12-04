@@ -39,11 +39,23 @@ float Render::cast_ray(const Poligon* _polig, const Point& _intersect_point, con
         if (!std::get<0>(intersect(direction, _intersect_point, _polig)))
         {
             Vector3 on_pov_direction = (camera->get_position() - _intersect_point).normalize();
+
             luminous_value += attenuation_const * std::max(
-                0., perp.scalar_poduct(direction)
+                0., 
+                perp.scalar_poduct(direction)
             ) * (*it).get_intensity() * _material.diffuse_reflect * (1 - _material.specularity);
+
             luminous_value += attenuation_const * std::max(
-                0., pow(on_pov_direction.scalar_poduct(reflect(perp, _intersect_point, (*it).get_position())), _material.specular_exponent)
+                0., 
+                pow(
+                    on_pov_direction.scalar_poduct(
+                        reflect(
+                            perp, 
+                            _intersect_point, 
+                            (*it).get_position()
+                        )
+                    ), _material.specular_exponent
+                )
             ) * (*it).get_intensity() * _material.spec_reflect * (1 - _material.specularity);
         }
         if (resurse_rate < 4)
@@ -66,8 +78,6 @@ float Render::cast_ray(const Poligon* _polig, const Point& _intersect_point, con
     }
     return luminous_value;
 }
-
-
 
 
 Vector3 Render::reflect(const Vector3& _normal, const Point& _intersect_point, const Point& _light_position) const
@@ -105,6 +115,7 @@ info Render::intersect(const Vector3& _direc, const Point& _pos, const Poligon* 
     } 
     return _info;  
 }
+
 
 void Render::show_camera_pos()
 {

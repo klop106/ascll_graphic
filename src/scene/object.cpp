@@ -35,9 +35,9 @@ Object::Object(std::string _file_name, const Material& _material)
 }
 
 
-double* Object::get_points(const std::string _str)
+std::vector<double> Object::get_points(const std::string _str)
 {
-    double coords[3];
+    std::vector<double> coords;
     std::string value = "";
     int p = -1;
     for (size_t i = 0; i < _str.length(); i++)
@@ -46,7 +46,7 @@ double* Object::get_points(const std::string _str)
         {
             if (p != -1)
             {
-                coords[p] = stod(value);
+                coords.push_back(stod(value));
             }
             value = "";
             p++;
@@ -58,9 +58,9 @@ double* Object::get_points(const std::string _str)
 }
 
 
-int* Object::get_node_ids(const std::string _str)
+std::vector<int> Object::get_node_ids(const std::string _str)
 {
-    int ids[3];
+    std::vector<int> ids;
     std::string value = "";
     int p = -1;
     for (size_t i = 0; i < _str.length(); i++)
@@ -69,7 +69,7 @@ int* Object::get_node_ids(const std::string _str)
         {
             if (p != -1)
             {
-                ids[p] = stoi(value);
+                ids.push_back(stoi(value));
             }
             value = "";
             p++;

@@ -1,0 +1,85 @@
+{
+    "type": 0,
+    "objects": [
+        {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": 3,
+            "template": "../objects/cub.json",
+            "material": {
+                "spec_reflect": 0,
+                "diffuse_reflect": 0.1,
+                "specular_exponent": 0,
+                "specularity": 1,
+                "attenuation": [1.0, 0.1, 0.0]
+            }
+        },
+        {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": 3,
+            "template": "../objects/plane.json",
+            "material": {
+                "spec_reflect": 0,
+                "diffuse_reflect": 1,
+                "specular_exponent": 0,
+                "specularity": 0,
+                "attenuation": [1.0, 0.1, 0.0]
+            }
+        },
+        {
+            "position": {
+                "x": 8.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": 2,
+            "template": "../objects/piramid.json",
+            "material": {
+                "spec_reflect": 1,
+                "diffuse_reflect": 1,
+                "specular_exponent": 1,
+                "specularity": 0,
+                "attenuation": [1.0, 0.1, 0.0]
+            }
+        }
+    ],
+    "light_sources": [
+        {
+            "position": {
+                "x": 4,
+                "y": 6,
+                "z": 7
+            },
+            "intensity": 1
+        }
+    ],
+    "pov": {
+        "position": {
+                "x": -8.0,
+                "y": 0.0,
+                "z": 0
+        },
+        "normal": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+        },
+        "tang1": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+        },
+        "tang2": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+        }
+    }
+}

@@ -24,12 +24,19 @@ private:
     std::vector<Object> parseObjects(const Json::Value root);
     std::vector<LightSource> parseLights(const Json::Value root);
     PointOfView parsePov(const Json::Value root);
+    size_t progressBarLength();
    
 public:
     Runner(int argc, char *argv[]);
     
 };
 
+size_t Runner::progressBarLength()
+{
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    return w.ws_col - 17;
+}
 
 PointOfView Runner::parsePov(const Json::Value root)
 {
@@ -116,6 +123,9 @@ std::vector<LightSource> Runner::parseLights(const Json::Value root)
 
 Runner::Runner(int argc, char *argv[])
 {
+    std::cout << "Compiling scene - start" << std::flush;
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
     if (argc > 2)
     {
         std::cerr << "invalid keys";
@@ -148,14 +158,30 @@ Runner::Runner(int argc, char *argv[])
     
     std::vector<std::string> film;
     double v = 0.1;
+    size_t scene_length = 100;
 
-    pov.transform(LinearTransformation().rotationTransform(Vector3(0, 1, 0), 1));
-    for (size_t i = 0; i < 100; i++)
+    std::cout << "Compiling objects - done" << std::endl;
+    std::cout << "Render scene - start" << std::endl;
+    std::cout << "Render progress: " << std::flush;
+
+    pov.transform(LinearTransformation().rotationTransform(Vector3(0, 1, 0), 0.5));
+    for (size_t i = 0; i < scene_length; i++)
     {   
+        size_t progress = 0;
+        if (static_cast<size_t>(scene_length / progressBarLength()) == progress)
+        {
+            std::cout << "#" << std::flush;
+            progress = 0;
+        }
+        progress++;
+        
         pov.transform(LinearTransformation().rotationTransform(Vector3(0, 0, 1), 0.05));
         render.render();
         film.push_back(frame.get_frame());
     }
+
+    std::cout << "\nRender scene - done" << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     while (true)
     {
@@ -163,7 +189,6 @@ Runner::Runner(int argc, char *argv[])
         {
             std::cout << film[i] << std::flush;
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            std::system("clean");
         }
     }
 

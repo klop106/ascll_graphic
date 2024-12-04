@@ -57,8 +57,8 @@ friend class Render;
 private:
     std::vector<Poligon> poligons;
    
-    double* get_points(const std::string _str);
-    int* get_node_ids(const std::string _str);
+    std::vector<double> get_points(const std::string _str);
+    std::vector<int> get_node_ids(const std::string _str);
     Material material;
     
 public:
